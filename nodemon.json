@@ -1,0 +1,8 @@
+{
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "verbose": false,
+  "ext": "js,mjs,cjs,ts,json",
+  "ignore": ["**/*.test.*", "**/.nyc_output", "**/dist", "**/tests"]
+}
