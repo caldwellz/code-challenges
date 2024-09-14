@@ -1,0 +1,32 @@
+{
+  "name": "@code-challenges/opiniion-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "main": "index.js",
+  "engines": {
+    "node": ">=21.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/caldwellz/code-challenges.git"
+  },
+  "scripts": {
+    "dev": "NODE_ENV=development npx nodemon --inspect --throw-deprecation --config ../nodemon.json index.js",
+    "lint": "npx eslint --fix .",
+    "test": "NODE_ENV=testing npx mocha --check-leaks './{,!(node_modules)/**}/*.test.js'"
+  },
+  "keywords": [],
+  "author": "Zach Caldwell",
+  "license": "MPL-2.0",
+  "homepage": "https://github.com/caldwellz/code-challenges#readme",
+  "bugs": {
+    "url": "https://github.com/caldwellz/code-challenges/issues"
+  },
+  "dependencies": {
+    "celebrate": "^15.0.3",
+    "express": "^5.0.0",
+    "helmet": "^7.1.0",
+    "response-time": "^2.3.2"
+  }
+}
