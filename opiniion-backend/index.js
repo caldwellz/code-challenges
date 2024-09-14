@@ -7,6 +7,7 @@
 import express from 'express';
 import v1 from './v1/index.js';
 import { prerouting, postrouting } from './lib/middleware.js';
+import { mongoConnect } from './lib/db.js';
 
 const app = express();
 const { NODE_ENV, HOST = '127.0.0.1', PORT = 8080 } = process.env;
@@ -17,6 +18,7 @@ app.use('/v1', v1);
 app.use(postrouting);
 
 async function main() {
+  await mongoConnect();
   app.listen(parseInt(PORT), HOST, () => {
     console.log(`Running on ${HOST}:${PORT} in '${NODE_ENV}' mode.`);
   });
