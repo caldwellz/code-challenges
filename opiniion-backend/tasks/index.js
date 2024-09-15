@@ -4,7 +4,9 @@
  * Copyright (C) 2024 Zach Caldwell *
  * All rights reserved.             *
  ************************************/
-const taskList = [];
+import updateUsersTask from './updateUsers.js';
+
+const taskList = [updateUsersTask];
 
 export function startTasks() {
   for (const task of taskList) {
