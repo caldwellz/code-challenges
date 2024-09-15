@@ -4,7 +4,9 @@
  * Copyright (C) 2024 Zach Caldwell *
  * All rights reserved.             *
  ************************************/
+import { Joi, celebrate } from 'celebrate';
 import { Router } from 'express';
+import User from '../models/User.js';
 
 const router = Router();
 
@@ -24,9 +26,17 @@ router.get('/userById/:userId', async (req, res) => {
 @param {String} stateCode
 @return {Array<User>} users with the state matching the stateCode param
 */
-router.post('/getUserByState', async (req, res) => {
-  return res.json();
-});
+router.post(
+  '/getUserByState',
+  celebrate({
+    body: Joi.object({ stateCode: Joi.string().required().length(2).uppercase() }).required(),
+  }),
+  async (req, res) => {
+    const { stateCode } = req.body;
+    const result = await User.find({ 'address.state': stateCode });
+    return res.json(result);
+  }
+);
 
 /**
 @method POST
