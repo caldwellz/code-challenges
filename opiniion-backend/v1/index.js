@@ -17,9 +17,18 @@ const userProjection = { _id: false, __v: false, 'address._id': false };
 @param {Int} userId
 @return {User} the user with the id that matches the userId param
 */
-router.get('/userById/:userId', async (req, res) => {
-  return res.json();
-});
+router.get(
+  '/userById/:userId',
+  celebrate({
+    params: Joi.object({ userId: Joi.number().required().min(1) }).required(),
+  }),
+  async (req, res, next) => {
+    const { userId: id } = req.params;
+    const result = await User.findOne({ id }, userProjection);
+    if (!result) return next(); // Continue to custom 404 Not Found responder
+    return res.json(result);
+  }
+);
 
 /**
 @method POST
