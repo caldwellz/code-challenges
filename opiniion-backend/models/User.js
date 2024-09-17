@@ -16,16 +16,29 @@ const addressSchema = new mongoose.Schema({
   zipcode: String,
 });
 
-const userSchema = new mongoose.Schema({
-  id: {
-    type: Number,
-    required: true,
-    min: 1,
+const userSchema = new mongoose.Schema(
+  {
+    id: {
+      type: Number,
+      required: true,
+      min: 1,
+    },
+    name: String,
+    username: String,
+    email: String,
+    address: addressSchema,
   },
-  name: String,
-  username: String,
-  email: String,
-  address: addressSchema,
+  { timestamps: true }
+);
+
+userSchema.index({
+  name: 'text',
+  username: 'text',
+  email: 'text',
+  'address.street': 'text',
+  'address.city': 'text',
+  'address.state': 'text',
+  'address.zipcode': 'text',
 });
 
 const User = mongoose.model(modelName, userSchema, collectionName);
