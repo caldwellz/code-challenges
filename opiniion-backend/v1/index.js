@@ -69,7 +69,14 @@ router.post('/countByState', async (req, res) => {
 @return {Array<String, {Array<User>}>} all existing states with the complete user objects within them
 */
 router.post('/userGroupByState', async (req, res) => {
-  return res.json();
+  const result = await User.aggregate([{ $group: { _id: '$address.state', users: { $push: '$$ROOT' } } }])
+    .project({
+      _id: false,
+      stateCode: '$_id',
+      users: true,
+    })
+    .project({ users: userProjection });
+  return res.json(result);
 });
 
 /**
