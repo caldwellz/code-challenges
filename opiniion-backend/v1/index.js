@@ -11,6 +11,21 @@ import User from '../models/User.js';
 const router = Router();
 const userProjection = { _id: false, __v: false, 'address._id': false };
 
+const addressValidationSchema = {
+  street: Joi.string().min(1),
+  city: Joi.string().min(1),
+  state: Joi.string().length(2).uppercase(),
+  zipcode: Joi.string().min(5),
+};
+
+const userValidationSchema = {
+  id: Joi.number().min(1),
+  name: Joi.string().min(1),
+  username: Joi.string().min(1),
+  email: Joi.string().min(1),
+  address: Joi.object(addressValidationSchema).options({ stripUnknown: true }),
+};
+
 /**
 @method Get
 @route /userById
@@ -20,7 +35,7 @@ const userProjection = { _id: false, __v: false, 'address._id': false };
 router.get(
   '/userById/:userId',
   celebrate({
-    params: Joi.object({ userId: Joi.number().required().min(1) }).required(),
+    params: Joi.object({ userId: userValidationSchema.id.required() }).required(),
   }),
   async (req, res, next) => {
     const { userId: id } = req.params;
@@ -39,7 +54,7 @@ router.get(
 router.post(
   '/getUserByState',
   celebrate({
-    body: Joi.object({ stateCode: Joi.string().required().length(2).uppercase() }).required(),
+    body: Joi.object({ stateCode: addressValidationSchema.state.required() }).required(),
   }),
   async (req, res) => {
     const { stateCode } = req.body;
@@ -104,8 +119,24 @@ router.post(
 @param {Dict} fieldsToUpdate
 @return {User} updated user object matching userId
 */
-router.post('/updateUser', async (req, res) => {
-  return res.json();
-});
+router.post(
+  '/updateUser',
+  celebrate({
+    body: Joi.object({
+      userId: userValidationSchema.id.required(),
+      fieldsToUpdate: Joi.object(userValidationSchema).options({ stripUnknown: true }).required(),
+    }).required(),
+  }),
+  async (req, res, next) => {
+    const { userId: id, fieldsToUpdate } = req.body;
+    const result = await User.findOneAndUpdate({ id }, fieldsToUpdate, {
+      projection: userProjection,
+      returnDocument: 'after',
+      upsert: false,
+    });
+    if (!result) return next(); // Continue to custom 404 Not Found responder
+    return res.json(result);
+  }
+);
 
 export default router;
