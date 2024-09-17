@@ -63,9 +63,17 @@ router.post('/userGroupByState', async (req, res) => {
 @param {String} searchParam
 @return {Array<User>} users with any field matching searchParam
 */
-router.post('/searchUsers', async (req, res) => {
-  return res.json();
-});
+router.post(
+  '/searchUsers',
+  celebrate({
+    body: Joi.object({ searchParam: Joi.string().required().min(1) }).required(),
+  }),
+  async (req, res) => {
+    const { searchParam } = req.body;
+    const results = await User.find({ $text: { $search: searchParam } }, userProjection);
+    return res.json(results);
+  }
+);
 
 /**
 @method POST
