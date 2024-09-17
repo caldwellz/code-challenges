@@ -54,7 +54,13 @@ router.post(
 @return {Array<String, Int>} all existing states with the number of users within them
 */
 router.post('/countByState', async (req, res) => {
-  return res.json();
+  const result = await User.aggregate([{ $group: { _id: '$address.state', count: { $sum: 1 } } }]).project({
+    _id: false,
+    stateCode: '$_id',
+    count: true,
+    sum: true,
+  });
+  return res.json(result);
 });
 
 /**
