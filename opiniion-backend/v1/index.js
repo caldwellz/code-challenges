@@ -9,6 +9,7 @@ import { Router } from 'express';
 import User from '../models/User.js';
 
 const router = Router();
+const userProjection = { _id: false, __v: false, 'address._id': false };
 
 /**
 @method Get
@@ -33,7 +34,7 @@ router.post(
   }),
   async (req, res) => {
     const { stateCode } = req.body;
-    const result = await User.find({ 'address.state': stateCode });
+    const result = await User.find({ 'address.state': stateCode }, userProjection);
     return res.json(result);
   }
 );
